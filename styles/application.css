@@ -1,0 +1,147 @@
+﻿.clear
+{
+    clear: both;
+}
+
+.back
+{
+    background-color: #afafaf;
+}
+
+#file-manager
+{
+    /*background-color: #afafaf;*/
+    /*height: 600px;*/
+    overflow: auto;
+}
+
+.manager-item .ajax-loading
+{
+    height: 525px;
+    width: 100%;
+    /*background-color: #333;*/
+    background-image: url('../images/loader2.gif');
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#manager-item-wrapper
+{
+    height: 525px;
+    overflow: auto;
+}
+
+.seperator-2
+{
+    border-bottom: solid 1px #CCC;
+}
+
+.manager-item .no-item
+{
+    font-weight: bold;
+    text-align: center;
+    margin-top: 100px;
+}
+
+.manager-item div.item 
+{
+    margin: 9px;
+    display: block;
+    float: left;
+    width: 141px;
+    height: 158px;
+    margin-bottom: 12px;
+    margin-right: 25px;
+    position: relative;
+}
+
+.manager-item div.controls 
+{
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.lib-folder, .img-thumbs
+{
+    display: block;
+}
+
+.lib-folder img
+{
+    width: 130px;
+    height: 90px;
+}
+
+.img-thumbs img
+{
+    width: 130px;
+    height: 90px;
+}
+
+.center-me
+{
+    margin: 0px auto;
+}
+
+.item .controls
+{
+    text-align: center;
+}
+
+.tooltip.bottom
+{
+    top: 128px !important;
+    /*top: 122px !important;*/
+}
+
+.detail-wrapper
+{
+    padding: 7px 20px 20px 20px;
+}
+
+.w-500
+{
+    width: 500px;
+    cursor: text !important;
+    background-color: #fff !important;
+}
+
+.w-95
+{
+    width: 95px !important;
+    text-align: left !important;
+}
+
+.seperator-msg
+{
+    height: 5px;
+    text-align: center;
+}
+
+.manager-message-wrapper
+{
+    background-color: #F9EDBE;
+    padding: 6px 10px;
+    border: 1px solid #F0C36D;
+    
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+    
+    -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    
+    font-family: arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    height: 16px;
+    line-height: 16px;
+    
+    display: inline-block;
+    margin: 0px auto;
+}
+
+.manager-message
+{
+    
+}
