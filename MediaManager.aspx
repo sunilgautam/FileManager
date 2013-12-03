@@ -109,7 +109,7 @@
         {{/each}}
         {{#each directory.files}}
         <div class="item" id="file-{{@index}}">
-            <a class="img-thumbs" data-placement="bottom" href="#" rel="{{this.Path}}" title="{{this.Name}}">
+            <a class="img-thumbs" data-placement="bottom" href="#" data-name="{{this.Name}}" data-path="{{this.Path}}" data-size="{{this.Size}}" data-ext="{{this.Extension}}" title="{{this.Name}}">
                 <img src="{{get_image_for_item this}}" class="img-polaroid">
             </a>
             <div class="controls">

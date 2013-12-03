@@ -41,7 +41,10 @@ function bytesToSize(bytes) {
         manager_path: "/ckHelper/file-manager.ashx",
         base_type: "all",
         base_layout: layouts.grid,
-        base_domain: null
+        base_domain: null,
+        onfileclick: function(name, ext, size, rel_path, abs_path) {
+            debug(name + ' - ' + ext +' - '+ size +' - '+ rel_path +' - '+ abs_path);
+        }
     };
     
     var $app = {
@@ -100,7 +103,8 @@ function bytesToSize(bytes) {
             // Compile template
             Handlebars.registerHelper('get_image_for_item', function(obj) {
                 if (obj.Extension == '.jpg' || obj.Extension == '.jpeg' || obj.Extension == '.png' || obj.Extension == '.gif' || obj.Extension == '.bmp'){
-                    return obj.Path;
+                    //ThumbnailHandler.ashx?src=uploads/sliders/Kavita_Bharitya_Large.jpg&w=200&h=200
+                    return 'ThumbnailHandler.ashx?src='+obj.Path+'&w=140&h=100';
                 } else if (obj.Extension == '.pdf') {
                     return 'images/file-pdf.jpg';
                 } else if (obj.Extension == '.doc' || obj.Extension == '.docx') {
@@ -140,7 +144,13 @@ function bytesToSize(bytes) {
             });
 
             self.elem.create_button.click(function(e) {
-                
+                var new_folder_name = self.elem.create_textbox.val();
+                if(new_folder_name.replace(/\s/g,"") == "") {
+                    self.show_auto_message("Please enter a folder name");
+                } else {
+                    var new_folder_path = self.current.path + '/' + new_folder_name;
+                    self.do_create_folder(new_folder_path);
+                }
             });
 
             self.elem.search_button.click(function(e) {
@@ -158,6 +168,14 @@ function bytesToSize(bytes) {
                 self.current.path = this.rel;
                 self.browse();
                 self.set_controls_state();
+            });
+            self.elem.container.on("click", ".img-thumbs", function(e) {
+                e.preventDefault();
+
+                if (self.options.onfileclick) {
+                    var info_elem = $(this);
+                    self.options.onfileclick(info_elem.data("name"), info_elem.data("ext"), info_elem.data("size"), info_elem.data("path"), self.options.base_domain + info_elem.data("path"));
+                }
             });
 
             self.elem.container.on("click", ".rename-folder,.rename-file", function(e) {
@@ -333,9 +351,6 @@ function bytesToSize(bytes) {
                 }
             });
         },
-        rename: function () {
-            
-        },
         do_delete: function(path, effected) {
             var self = this;
             debug(path);
@@ -351,6 +366,7 @@ function bytesToSize(bytes) {
                 dataType: "json",
                 success: function(data){
                     if (data.error == "success") {
+                        self.show_auto_message("Successfully deleted");
                         self.elem.detail_modal.modal('hide');
                         $(effected).hide("slow").remove();
                     } else {
@@ -381,6 +397,7 @@ function bytesToSize(bytes) {
                 dataType: "json",
                 success: function(data){
                     if (data.error == "success") {
+                        self.show_auto_message("Successfully renamed");
                         self.refresh();
                         self.elem.detail_modal.modal('hide');
                         // $(effected).find(".lib-folder,.img-thumbs").attr({"title": new_name, "rel": new_path});
@@ -394,6 +411,33 @@ function bytesToSize(bytes) {
                     self.elem.detail_modal.modal('hide');
                 }
             });
+        },
+        do_create_folder: function(path) {
+            var self = this;
+            debug(path);
+            
+            $.ajax({
+                url: self.options.manager_path,
+                data: {
+                        new_folder_Name: path,
+                        action: "create_folder"
+                },
+                type: "POST",
+                cache: false,
+                dataType: "json",
+                success: function(data){
+                    if (data.error == "success") {
+                        self.show_auto_message("Folder created successfully");
+                        self.refresh();
+                        self.elem.create_textbox.val('');
+                    } else {
+                        self.show_auto_message(data.error);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    self.show_auto_message("Error occurred.");
+                }
+            });
         }
     };
 
@@ -401,5 +445,9 @@ function bytesToSize(bytes) {
 })(window);
 
 $(function(){
-    window.$app.init({});
+    window.$app.init({
+        onfileclick: function(name){
+            debug('NAME => ' + name);
+        }
+    });
 });

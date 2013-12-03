@@ -21,15 +21,16 @@ public class file_manager : IHttpHandler
     public void ProcessRequest(HttpContext context)
     {
         FBResponse jsonResponse = new FBResponse();
-        
-        string type, action, path, filter, search, new_name;
+
+        string type, action, path, filter, search, new_name, new_folder_Name;
 
         type = (context.Request.Params["type"] == null) ? "all" : context.Request.Params["type"];
         action = (context.Request.Params["action"] == null) ? "browse" : context.Request.Params["action"];
         path = (context.Request.Params["path"] == null) ? "/" : context.Request.Params["path"];
         filter = (context.Request.Params["filter"] == null || context.Request.Params["filter"] == "") ? null : context.Request.Params["filter"];
         search = context.Request.Params["q"];
-        new_name = (context.Request.Params["new_name"] == null) ? "" : context.Request.Params["new_name"]; ;
+        new_name = (context.Request.Params["new_name"] == null) ? "" : context.Request.Params["new_name"];
+        new_folder_Name = (context.Request.Params["new_folder_Name"] == null) ? "" : context.Request.Params["new_folder_Name"];
         
         string system_abs_path = GetSystemAbsPath(path);
         string relative_path = GetRelativePath(path);
@@ -48,9 +49,11 @@ public class file_manager : IHttpHandler
         {
             DoDelete(jsonResponse, system_abs_path, relative_path);
         }
-        else if (action == "create_folder")
+        else if (action == "create_folder" && context.Request.HttpMethod == "POST")
         {
-
+            string system_abs_new_folder_path = GetSystemAbsPath(new_folder_Name);
+            string relative_new_folder_path = GetRelativePath(new_folder_Name);
+            DoCreate(jsonResponse, system_abs_new_folder_path, relative_new_folder_path);
         }
         else if (action == "search")
         {
@@ -65,6 +68,47 @@ public class file_manager : IHttpHandler
     }
     
     /*************************************************************************************/
+
+    private void DoCreate(FBResponse response, string system_abs_path, string relative_path)
+    {
+        string target_path = system_abs_path;
+
+        try
+        {
+            if (Directory.Exists(target_path))
+            {
+                response.error = "Directory with same name already exists";
+            }
+            else
+            {
+                Directory.CreateDirectory(target_path);
+            }
+        }
+        catch (DirectoryNotFoundException dir_not_found)
+        {
+            response.error = "Specified directory not found";
+        }
+        catch (FileNotFoundException file_not_found)
+        {
+            response.error = "Specified file not found";
+        }
+        catch (UnauthorizedAccessException ua_ex)
+        {
+            response.error = "The directory contains a read-only file";
+        }
+        catch (IOException io_ex)
+        {
+            response.error = "File system error occurred";
+        }
+        catch (System.Security.SecurityException sec_ex)
+        {
+            response.error = "Does not have the required permission";
+        }
+        catch (Exception ex)
+        {
+            response.error = "Error occurred while fetching directory information";
+        }
+    }
 
     private void DoRename(FBResponse response, string system_abs_path, string relative_path, string system_abs_new_path, string relative_new_path)
     {
