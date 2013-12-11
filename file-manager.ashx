@@ -17,6 +17,18 @@ public class file_manager : IHttpHandler
         {"text", new string[] { "*.txt", "*.rtf" }},
         {"structured", new string[] { "*.xml", "*.json" }}
     };
+    string[] global_exclude_files = new string[]
+                                 {
+                                     "thumbs.db"
+                                 };
+    string[] exclude_rule_files = new string[]
+                                 {
+                                    
+                                 };
+    string[] exclude_rule_folder = new string[] 
+                                 {
+                                    
+                                 };
     
     public void ProcessRequest(HttpContext context)
     {
@@ -228,6 +240,8 @@ public class file_manager : IHttpHandler
             response.directory.Name = d.Name;
             response.directory.Path = relative_path;
 
+            bool exclude_this = false;
+            
             // ***************************************************** //
             // GET FOLDERS
             // ***************************************************** //
@@ -247,12 +261,26 @@ public class file_manager : IHttpHandler
             {
                 foreach (DirectoryInfo dir_info in all_dirs)
                 {
-                    directory = new FBDirectory();
-                    directory.Name = dir_info.Name;
-                    directory.Path = relative_path + dir_info.Name;
-                    directory.NoOfFiles = dir_info.GetFiles().Length;
-                    directory.NoOfDirectories = dir_info.GetDirectories().Length;
-                    response.directory.AddDirectory(directory);
+                    exclude_this = false;
+                    // Exclude folder rule
+                    foreach (string exclude_folder in exclude_rule_folder)
+                    {
+                        if ((relative_path + dir_info.Name).Equals(exclude_folder, StringComparison.OrdinalIgnoreCase))
+                        {
+                            exclude_this = true;
+                            break;
+                        }
+                    }
+
+                    if (!exclude_this)
+                    {
+                        directory = new FBDirectory();
+                        directory.Name = dir_info.Name;
+                        directory.Path = relative_path + dir_info.Name;
+                        directory.NoOfFiles = dir_info.GetFiles().Length;
+                        directory.NoOfDirectories = dir_info.GetDirectories().Length;
+                        response.directory.AddDirectory(directory);
+                    }
                 }
             }
 
@@ -296,13 +324,40 @@ public class file_manager : IHttpHandler
                     {
                         foreach (FileInfo file_info in all_files)
                         {
-                            file = new FBFile();
-                            file.Name = file_info.Name;
-                            file.Extension = file_info.Extension.ToLower();
-                            file.Size = file_info.Length;
-                            file.Path = relative_path + file_info.Name;
+                            exclude_this = false;
+                            // Global exclude rule
+                            foreach (string exclude_file in global_exclude_files)
+                            {
+                                if (file_info.Name.Equals(exclude_file, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    exclude_this = true;
+                                    break;
+                                }
+                            }
+                            
+                            // Exclude file rule
+                            if (!exclude_this)
+                            {
+                                foreach (string exclude_file in exclude_rule_files)
+                                {
+                                    if ((relative_path + file_info.Name).Equals(exclude_file, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        exclude_this = true;
+                                        break;
+                                    }
+                                }
+                            }
 
-                            response.directory.AddFile(file);
+                            if (!exclude_this)
+                            {
+                                file = new FBFile();
+                                file.Name = file_info.Name;
+                                file.Extension = file_info.Extension.ToLower();
+                                file.Size = file_info.Length;
+                                file.Path = relative_path + file_info.Name;
+
+                                response.directory.AddFile(file);
+                            }
                         }
                     }
                 }

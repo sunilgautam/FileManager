@@ -65,6 +65,7 @@ function bytesToSize(bytes) {
                 create_button: null,
                 search_textbox: null,
                 search_button: null,
+                search_cancel: null,
                 toggle_layout_button: null,
                 detail_modal: null,
                 message_container: null
@@ -96,6 +97,7 @@ function bytesToSize(bytes) {
             self.elem.create_button = $("#btn-create-folder");
             self.elem.search_textbox = $("#txt-search");
             self.elem.search_button = $("#btn-search");
+            self.elem.search_cancel = $("#search-cancel");
             self.elem.toggle_layout_button = $("#toggle-layout");
             self.elem.detail_modal = $("#detail-modal");
             self.elem.message_container = $("#manager-message-wrapper");
@@ -117,6 +119,12 @@ function bytesToSize(bytes) {
                     return 'images/file.jpg';
                 }
                 return object;
+            });
+            Handlebars.registerHelper('get_total_item', function(total1, total2) {
+                return (total1 + total2);
+            });
+            Handlebars.registerHelper('get_bytes_to_size', function(size) {
+                return bytesToSize(size);
             });
 
             var source_grid = $("#manager-item-grid-template").html();
@@ -154,11 +162,28 @@ function bytesToSize(bytes) {
             });
 
             self.elem.search_button.click(function(e) {
-                
+                var search_term = self.elem.search_textbox.val();
+                if(search_term.replace(/\s/g,"") == "") {
+                    self.show_auto_message("Please enter a search term");
+                } else {
+                    self.current.search = search_term;
+                    self.browse();
+                    self.set_controls_state();
+                }
+            });
+            self.elem.search_cancel.click(function(e) {
+                self.elem.search_textbox.val('');
+                self.current.search = '';
+                self.browse();
+                self.set_controls_state();
             });
 
             self.elem.toggle_layout_button.click(function(e) {
-                
+                e.preventDefault();
+                self.current.layout = (self.current.layout == layouts.grid) ? layouts.list : layouts.grid;
+                $.cookie('fm_layout', self.current.layout, { expires: 1 });
+                self.browse();
+                self.set_controls_state();
             });
 
             //
@@ -239,16 +264,16 @@ function bytesToSize(bytes) {
             });
 
             // Set item tooltip
-            self.elem.container.tooltip({selector: ".lib-folder,.img-thumbs"});
+            self.elem.container.tooltip({selector: ".tooltiper"});
 
             // load files and folders
             self.current.path = $.cookie('fm_path') || self.options.base_path;
             self.current.type = self.options.base_type;
-            self.current.filter = "";
-            self.current.search = "";
-            self.current.layout = self.options.base_layout;
-            self.set_controls_state();
+            self.current.filter = $.cookie('fm_filter') || "";
+            self.current.search = $.cookie('fm_search') || "";
+            self.current.layout = $.cookie('fm_layout') || self.options.base_layout;
             self.browse();
+            self.set_controls_state();
         },
         show_loading: function() {
             var self = this;
@@ -289,6 +314,13 @@ function bytesToSize(bytes) {
                 self.elem.back_button.attr('disabled', 'disabled');
             } else {
                 self.elem.back_button.removeAttr('disabled');
+            }
+
+            if (self.current.search == "") {
+                self.elem.search_cancel.hide();
+            } else {
+                self.elem.search_cancel.show();
+                self.elem.back_button.attr('disabled', 'disabled');
             }
 
             // Current location
@@ -340,6 +372,12 @@ function bytesToSize(bytes) {
                     if (data.error == "success") {
                         $.cookie('fm_path', self.current.path, { expires: 1 });
                         self.render(data);
+
+                        if (self.current.search == "") {
+                            $.cookie('fm_search', '', { expires: 1 });
+                        } else {
+                            $.cookie('fm_search', self.current.path, { expires: 1 });
+                        }
                     } else {
                         self.show_auto_message(data.error);
                         self.hide_loading();

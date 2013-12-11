@@ -67,6 +67,11 @@
     display: block;
 }
 
+.lib-folder-list, .img-thumbs-list
+{
+    display: inline;
+}
+
 .lib-folder img
 {
     width: 130px;
@@ -144,4 +149,14 @@
 .manager-message
 {
     
+}
+
+#search-cancel
+{
+    position: absolute;
+    left: 123px;
+    top: 7px;
+    cursor: pointer;
+    display: none;
+    z-index: 5;
 }

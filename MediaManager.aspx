@@ -96,7 +96,7 @@
     <script id="manager-item-grid-template" type="text/x-handlebars-template">
         {{#each directory.directories}}
         <div class="item" id="dir-{{@index}}">
-            <a class="lib-folder" data-placement="bottom" href="#" rel="{{this.Path}}" title="{{this.Name}}">
+            <a class="lib-folder tooltiper" data-placement="bottom" href="#" rel="{{this.Path}}" title="{{this.Name}}">
                 <img src="images/folder.png" class="img-polaroid">
             </a>
             <div class="controls">
@@ -109,7 +109,7 @@
         {{/each}}
         {{#each directory.files}}
         <div class="item" id="file-{{@index}}">
-            <a class="img-thumbs" data-placement="bottom" href="#" data-name="{{this.Name}}" data-path="{{this.Path}}" data-size="{{this.Size}}" data-ext="{{this.Extension}}" title="{{this.Name}}">
+            <a class="img-thumbs tooltiper" data-placement="bottom" href="#" data-name="{{this.Name}}" data-path="{{this.Path}}" data-size="{{this.Size}}" data-ext="{{this.Extension}}" title="{{this.Name}}">
                 <img src="{{get_image_for_item this}}" class="img-polaroid">
             </a>
             <div class="controls">
@@ -123,30 +123,46 @@
         <div class="clearfix"></div>
     </script>
     <script id="manager-item-list-template" type="text/x-handlebars-template">
-        {{#each directory.directories}}
-        <div class="item">
-            <a class="lib-folder" href="#" rel="{{this.Path}}" title="{{this.Name}}">
-                <img src="images/folder.png" class="img-polaroid">
-            </a>
-            <div class="controls">
-                <a href="" class="pull-left rename-folder" title="Rename" rel="{{this.Name}}"><i class="icon-pencil"></i></a>
-                <a href="" class="pull-right delete-folder" rel="{{this.Path}}" title="Delete"><i class="icon-trash"></i></a>
-                <div class="clearfix"></div>
-            </div>
-        </div>
-        {{/each}}
-        {{#each directory.files}}
-        <div class="item">
-            <a href="" class="img-thumbs" rel="{{this.Path}}" title="{{this.Name}}">
-                <img src="{{get_image_for_item this}}" class="img-polaroid">
-            </a>
-            <div class="controls">
-                <a href="" class="pull-left rename-file" title="Rename" rel="{{this.Name}}"><i class="icon-pencil"></i></a>
-                <a href="" class="pull-right delete-file" rel="{{this.Path}}" title="Delete"><i class="icon-trash"></i></a>
-                <div class="clearfix"></div>
-            </div>
-        </div>
-        {{/each}}
+        <table class="table">
+	        <tbody>
+                {{#each directory.directories}}
+                <tr class="item" id="dir-{{@index}}">
+			        <td>
+				        <i class="icon-folder-open"></i>&nbsp;
+				        <a class="lib-folder lib-folder-list" data-placement="bottom" href="#" rel="{{this.Path}}" title="{{this.Name}}">
+                            {{this.Name}}
+                        </a>
+			        </td>
+			        <td width="20%">
+				        {{get_total_item this.NoOfDirectories this.NoOfFiles}} Items
+			        </td>
+			        <td width="15%">
+				        <a href="#" class="btn rename-folder" data-effected="#dir-{{@index}}" data-name="{{this.Name}}" data-path="{{this.Path}}" data-ext="" title="Rename"><i class="icon-pencil"></i></a>
+                        <a href="#" class="btn info-folder" data-name="{{this.Name}}" data-path="{{this.Path}}" title="View details"><i class="icon-info-sign"></i></a>
+                        <a href="#" class="btn delete-folder" data-effected="#dir-{{@index}}" data-name="{{this.Name}}" data-path="{{this.Path}}" title="Delete"><i class="icon-trash"></i></a>
+			        </td>
+		        </tr>
+                {{/each}}
+                {{#each directory.files}}
+                <tr class="item" id="file-{{@index}}">
+			        <td>
+				        <i class="icon-picture"></i>&nbsp;
+                        <a class="img-thumbs img-thumbs-list" data-placement="bottom" href="#" data-name="{{this.Name}}" data-path="{{this.Path}}" data-size="{{this.Size}}" data-ext="{{this.Extension}}" title="{{this.Name}}">
+                            {{this.Name}}
+                        </a>
+			        </td>
+			        <td width="20%">
+				        {{get_bytes_to_size this.Size}}
+			        </td>
+			        <td width="15%">
+				        <a href="#" class="btn rename-file" data-effected="#file-{{@index}}" data-name="{{this.Name}}" data-path="{{this.Path}}" data-ext="{{this.Extension}}" title="Rename"><i class="icon-pencil"></i></a>
+                        <a href="#" class="btn info-file" data-name="{{this.Name}}" data-path="{{this.Path}}" data-size="{{this.Size}}" title="View details"><i class="icon-info-sign"></i></a>
+                        <a href="#" class="btn delete-file" data-effected="#file-{{@index}}" data-name="{{this.Name}}" data-path="{{this.Path}}" title="Delete"><i class="icon-trash"></i></a>
+			        </td>
+		        </tr>
+                {{/each}}
+            </tbody>
+        </table>
         <div class="clearfix"></div>
     </script>
 </head>
@@ -174,8 +190,9 @@
                                     </button>
                                 </div>
                                 <div class="pull-right" style="padding-right: 12px;">
-                                    <div class="input-append">
+                                    <div class="input-append" style="position: relative;">
                                         <input type="text" class="span8" id="txt-search" placeholder="Search" />
+                                        <i class="icon-remove" id="search-cancel"></i>
                                         <button id="btn-search" class="btn" type="button">
                                             &nbsp;<i class="icon-search"></i>&nbsp;
                                         </button>
@@ -201,7 +218,7 @@
 								<p class="pull-left muted" id="lbl-path" style="padding-left: 12px;"></p>
 
 								<p style="padding-right: 40px;" class="pull-right transparent">
-                                    <a id="toggle-layout" href="" title="Toggle List/Grid Views">
+                                    <a id="toggle-layout" href="#" title="Toggle List Views/Grid Views">
                                         <i class="icon-th-list"></i>
                                     </a>
                                 </p>
