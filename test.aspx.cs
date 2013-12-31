@@ -14,5 +14,7 @@ public partial class ckHelper_test : System.Web.UI.Page
         {
             Response.Write(string.Format("{0} => {1}<br />", path, Server.MapPath("~/" + path)));
         }
+
+        Response.Write(Server.MapPath("~/uploads/plupload/"));
     }
 }
