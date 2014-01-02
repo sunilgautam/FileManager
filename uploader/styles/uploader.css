@@ -88,10 +88,9 @@
 
 #plupload-file-list .progress {
     width: 200px;
-    border: solid 1px #DFDFDF;
     float: right;
     position: relative;
-    margin-top: 6px;
+    margin-top: 7px;
     margin-right: 6px;
 }
 
@@ -107,6 +106,9 @@
     box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
     -webkit-transition: width .6s ease;
     transition: width .6s ease;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 #plupload-file-list .progress-text {
