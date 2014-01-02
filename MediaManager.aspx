@@ -176,6 +176,7 @@
                 <div class="tabbable tabs-left">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#file-manager" data-toggle="tab">File Manager</a></li>
+                        <li><a href="#upload-manager" data-toggle="tab">Upload Manager</a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="file-manager">
@@ -227,6 +228,12 @@
                             <div class="manager-item" id="manager-item-wrapper">
                             </div>
                             <div id="detail-modal" style="width: 702px;" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+                            </div>
+                        </div>
+                        <div class="tab-pane active" id="upload-manager">
+                            <div>
+                                <select id="upload-directory">
+                                </select>
                             </div>
                         </div>
                     </div>

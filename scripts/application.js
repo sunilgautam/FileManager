@@ -39,6 +39,7 @@ function bytesToSize(bytes) {
     default_options = {
         base_path: "/uploads",
         manager_path: "/ckHelper/file-manager.ashx",
+        dir_helper_path: "/ckHelper/directory_helper.ashx",
         base_type: "all",
         base_layout: layouts.grid,
         base_domain: null,
@@ -274,6 +275,9 @@ function bytesToSize(bytes) {
             self.current.layout = $.cookie('fm_layout') || self.options.base_layout;
             self.browse();
             self.set_controls_state();
+
+            // load upload direcory skeleton
+            self.build_dir_skeleton();
         },
         show_loading: function() {
             var self = this;
@@ -476,6 +480,28 @@ function bytesToSize(bytes) {
                     self.show_auto_message("Error occurred.");
                 }
             });
+        },
+        build_dir_skeleton: function() {
+            var self = this;
+            
+            $.ajax({
+                url: self.options.dir_helper_path,
+                data: {
+                        new_folder_Name: self.options.base_path,
+                        action: "get_skeleton"
+                },
+                cache: false,
+                dataType: "html",
+                success: function(data){
+                    $("#upload-directory").html(data);
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    self.show_auto_message("Error occurred.");
+                }
+            });
+        },
+        get_dir_opt: function(data) {
+            
         }
     };
 
