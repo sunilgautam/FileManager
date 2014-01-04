@@ -24,7 +24,7 @@ public class directory_helper : IHttpHandler
         StringBuilder skeleton = new StringBuilder();
         
         DirectoryInfo d = new DirectoryInfo(system_abs_path);
-        skeleton.AppendFormat("\n<option value\"{1}\">{0}</option>", d.Name, relative_path);
+        skeleton.AppendFormat("<option value\"{1}\">{0}</option>", d.Name, relative_path);
 
         DirectoryInfo[] all_dirs = d.GetDirectories();
         if (all_dirs != null && all_dirs.Length > 0)
@@ -45,7 +45,7 @@ public class directory_helper : IHttpHandler
             string padding = string.Empty;
             for (int i = 0; i < level; i++)
             {
-                padding += "... ";
+                padding += "__ ";
             }
 
             // ***************************************************** //
@@ -68,14 +68,14 @@ public class directory_helper : IHttpHandler
 
                     if (!exclude_this)
                     {
-                        skeleton.AppendFormat("\n<option value\"{1}\">{2}{0}</option>", dir_info.Name, relative_path + dir_info.Name, padding);
+                        skeleton.AppendFormat("<option value=\"{1}\">{2}{0}</option>", dir_info.Name, relative_path + dir_info.Name, padding);
 
                         DirectoryInfo[] inner_dirs = dir_info.GetDirectories();
                         if (inner_dirs != null && inner_dirs.Length > 0)
                         {
                             int curr_level = level;
                             curr_level++;
-                            DoBrowse(folder_path + "\\" + dir_info.Name, relative_path, inner_dirs, skeleton, curr_level);
+                            DoBrowse(folder_path + "\\" + dir_info.Name, relative_path + dir_info.Name + "/", inner_dirs, skeleton, curr_level);
                         }
                     }
                 }

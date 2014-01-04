@@ -1,0 +1,144 @@
+﻿#plupload-upload-ui {
+    position: relative;
+}
+
+#drag-drop-area {
+    border: 4px dashed #DDD;
+    height: 200px;
+}
+
+#drag-drop-area.drag-over {
+    border-color: #83b4d8;
+}
+
+#drag-drop-area .drag-drop-inside {
+    margin: 70px auto 0;
+    width: 250px;
+}
+
+#drag-drop-area .drag-drop-inside p, #drag-drop-area p.drag-drop-buttons {
+    display: block;
+}
+
+#drag-drop-area .drag-drop-inside p.drag-drop-info {
+    font-size: 20px;
+    text-align: center;
+    color: #AAA;
+    margin: 5px 0;
+}
+
+#drag-drop-area .drag-drop-inside p {
+    font-size: 14px;
+    text-align: center;
+    color: #AAA;
+    margin: 5px 0;
+}
+
+#drag-drop-area p {
+    margin: 1em 0;
+}
+
+.upload-file {
+    background-color: #FFF;
+    color: #333;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    border: solid 1px #DFDFDF;
+    margin: 1px;
+    padding: 3px;
+    line-height: 15px;
+}
+
+.upload-button {
+    background: #F3F3F3;
+    background-image: linear-gradient(to bottom,#FEFEFE,#F4F4F4);
+    border-color: #BBB;
+    color: #333;
+    text-shadow: 0 1px 0 #FFF;
+    display: inline-block;
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 23px;
+    height: 24px;
+    margin: 0;
+    padding: 0 10px 1px;
+    cursor: pointer;
+    border-width: 1px;
+    border-style: solid;
+    -webkit-border-radius: 3px;
+    -webkit-appearance: none;
+    border-radius: 3px;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+#plupload-file-list {
+    margin-bottom: 10px;
+}
+
+#plupload-file-list .file-list-item {
+    border: solid 1px #DFDFDF;
+    line-height: 30px;
+    padding-left: 10px;
+}
+
+#plupload-file-list .file-list-item a {
+    
+}
+
+#plupload-file-list .progress {
+    width: 200px;
+    float: right;
+    margin-bottom: 0;
+    margin-top: 5px;
+    margin-right: 5px;
+    position: relative;
+}
+
+#plupload-file-list .progress-text {
+    line-height: 20px;
+    width: 200px;
+    position: absolute;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/*#plupload-file-list .progress {
+    width: 200px;
+    float: right;
+    position: relative;
+    margin-top: 7px;
+    margin-right: 6px;
+}
+
+#plupload-file-list .progressbar {
+    width: 0;
+    height: 100%;
+    font-size: 12px;
+    line-height: 20px;
+    color: #FFF;
+    text-align: center;
+    background-color: #428BCA;
+    -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    -webkit-transition: width .6s ease;
+    transition: width .6s ease;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#plupload-file-list .progress-text {
+    position: absolute;
+    top: 0;
+    width: 200px;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+}*/
+
+#plupload-file-list .cancel {
+    float: right;
+    margin-right: 6px;
+}

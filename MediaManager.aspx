@@ -6,12 +6,23 @@
 <head runat="server">
     <title>Media Manager</title>
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="styles/uploader.css" rel="stylesheet" type="text/css" />
     <link href="styles/application.css" rel="stylesheet" type="text/css" />
     <script src="scripts/jquery-1.8.3.min.js" type="text/javascript"></script>
     <script src="bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
     <script src="scripts/handlebars-v1.1.2.js" type="text/javascript"></script>
     <script src="scripts/jquery.cookie.js" type="text/javascript"></script>
+    <script src="scripts/plupload.full.min.js" type="text/javascript"></script>
     <script src="scripts/application.js" type="text/javascript"></script>
+    <script id="up-list-template" type="text/x-handlebars-template">
+        <div id="{{id}}" class="file-list-item">
+            <a href="javascript:void(0)" target="_blank" class="entry">{{name}}({{size}})</a>
+            <div class="progress progress-striped active">
+                <div class="bar" style="width: 0;">&nbsp;</div>
+                <div class="progress-text">Processing ...</div>
+            </div>
+        </div>
+    </script>
     <script id="alert-rename-template" type="text/x-handlebars-template">
         <div class="modal-header">
             <h4>Rename</h4>
@@ -230,10 +241,36 @@
                             <div id="detail-modal" style="width: 702px;" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
                             </div>
                         </div>
-                        <div class="tab-pane active" id="upload-manager">
+                        <div class="tab-pane" id="upload-manager">
                             <div>
                                 <select id="upload-directory">
                                 </select>
+                                <button id="btn-upload-refresh" title="refresh" class="btn" type="button" style="vertical-align: top;">
+                                    &nbsp;<i class="icon-refresh"></i>&nbsp;
+                                </button>
+                            </div>
+                            <div id="plupload-upload-ui">
+                                <div id="drag-drop-area">
+                                    <div class="drag-drop-inside">
+                                        <p class="drag-drop-info">Drop files here</p>
+                                        <p>or</p>
+                                        <p class="drag-drop-buttons">
+                                            <input id="plupload-browse-button" class="upload-button" type="button" value="Select Files" />
+                                        </p>
+                                    </div>
+                                </div>
+                                <p>
+                                    Max file size 2GB
+                                </p>
+                                <p>
+                                    You are using the advance uploader. Problems? Try the 
+                                    <a id="upload-go-to-html" href="file-uploader.aspx?browser-uploader=1">basic uploader</a> 
+                                    instead.
+                                </p>
+                                <p id="plupload-upload-error" style="display: none;">&nbsp;</p>
+                                <div id="plupload-file-list">
+                                    
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -39,13 +39,22 @@ function bytesToSize(bytes) {
     default_options = {
         base_path: "/uploads",
         manager_path: "/ckHelper/file-manager.ashx",
-        dir_helper_path: "/ckHelper/directory_helper.ashx",
+        dir_helper_path: "/ckHelper/directory-helper.ashx",
         base_type: "all",
         base_layout: layouts.grid,
         base_domain: null,
         onfileclick: function(name, ext, size, rel_path, abs_path) {
             debug(name + ' - ' + ext +' - '+ size +' - '+ rel_path +' - '+ abs_path);
-        }
+        },
+        up_url: 'upload.ashx',
+        up_flash_swf_url: 'scripts/Moxie.swf',
+        up_silverlight_xap_url: 'scripts/Moxie.xap',
+        up_file_data_name: 'async-upload',
+        up_chunk_size: '1mb',
+        up_filters: {
+            max_file_size: '2000mb'
+        },
+        up_unique_names: true
     };
     
     var $app = {
@@ -69,7 +78,14 @@ function bytesToSize(bytes) {
                 search_cancel: null,
                 toggle_layout_button: null,
                 detail_modal: null,
-                message_container: null
+                message_container: null,
+                up_drag_drop_area: null,
+                up_file_list_container: null,
+                up_browse_button: null,
+                up_container: null,
+                up_error: null,
+                directory_select: null,
+                directory_refresh: null
              },
         item_template: {
             grid: null,
@@ -78,8 +94,10 @@ function bytesToSize(bytes) {
             folder_detail: null,
             file_detail: null,
             _delete: null,
-            rename: null
+            rename: null,
+            upload_list: null
         },
+        uploader: null,
         timer: null,
         init: function (opt) {
             var self = this;
@@ -102,6 +120,13 @@ function bytesToSize(bytes) {
             self.elem.toggle_layout_button = $("#toggle-layout");
             self.elem.detail_modal = $("#detail-modal");
             self.elem.message_container = $("#manager-message-wrapper");
+            self.elem.up_container = $("#plupload-upload-ui");
+            self.elem.up_drag_drop_area = $("#drag-drop-area");
+            self.elem.up_browse_button = $("#plupload-browse-button");
+            self.elem.up_file_list_container = $("#plupload-file-list");
+            self.elem.up_error = $("#plupload-upload-error");
+            self.elem.directory_select = $("#upload-directory");
+            self.elem.directory_refresh = $("#btn-upload-refresh");
 
             // Compile template
             Handlebars.registerHelper('get_image_for_item', function(obj) {
@@ -135,6 +160,7 @@ function bytesToSize(bytes) {
             var source_file = $("#file-details-template").html();
             var source_delete = $("#alert-delete-template").html();
             var source_rename = $("#alert-rename-template").html();
+            var source_upload_list = $("#up-list-template").html();
             self.item_template.grid = Handlebars.compile(source_grid);
             self.item_template.list = Handlebars.compile(source_list);
             self.item_template.empty = Handlebars.compile(source_blank);
@@ -142,6 +168,7 @@ function bytesToSize(bytes) {
             self.item_template.file_detail = Handlebars.compile(source_file);
             self.item_template._delete = Handlebars.compile(source_delete);
             self.item_template.rename = Handlebars.compile(source_rename);
+            self.item_template.upload_list = Handlebars.compile(source_upload_list);
 
             // Bind events
             self.elem.back_button.click(function(e) {
@@ -264,6 +291,10 @@ function bytesToSize(bytes) {
                 self.elem.detail_modal.html(self.item_template.file_detail(file_details)).modal();
             });
 
+            self.elem.directory_refresh.click(function(e) {
+                self.build_dir_skeleton();
+            });
+
             // Set item tooltip
             self.elem.container.tooltip({selector: ".tooltiper"});
 
@@ -278,6 +309,13 @@ function bytesToSize(bytes) {
 
             // load upload direcory skeleton
             self.build_dir_skeleton();
+            self.build_uploader();
+
+            // tab hash navigation
+            if (location.hash !== '') $('a[href="' + location.hash + '"]').tab('show');
+            $('a[data-toggle="tab"]').on('click', function (e) {
+                location.hash = $(e.target).attr('href').substr(1);
+            });
         },
         show_loading: function() {
             var self = this;
@@ -493,15 +531,58 @@ function bytesToSize(bytes) {
                 cache: false,
                 dataType: "html",
                 success: function(data){
-                    $("#upload-directory").html(data);
+                    self.elem.directory_select.html(data);
                 },
                 error: function(jqXHR, textStatus, errorThrown){
                     self.show_auto_message("Error occurred.");
                 }
             });
         },
-        get_dir_opt: function(data) {
+        build_uploader: function() {
+            var self = this;
             
+            self.elem.up_drag_drop_area
+            .on("dragover", function () { self.elem.up_drag_drop_area.addClass("drag-over") })
+            .on("dragleave", function () { self.elem.up_drag_drop_area.removeClass("drag-over") })
+            .on("drop", function () { self.elem.up_drag_drop_area.removeClass("drag-over") });
+            
+            self.uploader = new plupload.Uploader({
+                browse_button: self.elem.up_browse_button[0],    // Browse button
+                container: self.elem.up_container[0],            // Element which will contain plupload stucture
+                drop_element: self.elem.up_drag_drop_area[0],    // Drop element
+                url: self.options.up_url,
+                flash_swf_url: self.options.up_flash_swf_url,
+                silverlight_xap_url: self.options.up_silverlight_xap_url,
+                file_data_name: self.options.up_file_data_name,
+                chunk_size: self.options.up_chunk_size,
+                filters: self.options.up_filters,
+                unique_names: self.options.up_unique_names,
+                init: {
+                    FilesAdded: function (up, files) {
+                        plupload.each(files, function (file) {
+                            self.elem.up_file_list_container.append(self.item_template.upload_list(file));
+                        });
+                        self.uploader.settings.multipart_params = {path: self.elem.directory_select.val()};
+                        self.uploader.refresh();
+                        self.uploader.start();
+                    },
+                    FileUploaded: function (up, file, response) {
+                        $("#" + file.id)
+                            .find(".progress-text")
+                            .text("Done")
+                            .parent()
+                            .prevAll(".entry:first")[0].href = jQuery.parseJSON(response.response).result;
+                    },
+                    UploadProgress: function (up, file) {
+                        $("#" + file.id).find(".bar").css({ width: file.percent + "%" }).next().text(file.percent + "%");
+                    },
+                    Error: function (up, err) {
+                        self.elem.up_error.html("Error #" + err.code + ": " + err.message);
+                    }
+                }
+            });
+
+            self.uploader.init();
         }
     };
 
