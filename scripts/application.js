@@ -510,6 +510,7 @@ function bytesToSize(bytes) {
                         self.show_auto_message("Folder created successfully");
                         self.refresh();
                         self.elem.create_textbox.val('');
+                        self.build_dir_skeleton();
                     } else {
                         self.show_auto_message(data.error);
                     }
@@ -575,6 +576,9 @@ function bytesToSize(bytes) {
                     },
                     UploadProgress: function (up, file) {
                         $("#" + file.id).find(".bar").css({ width: file.percent + "%" }).next().text(file.percent + "%");
+                    },
+                    UploadComplete: function (up, file) {
+                        self.refresh();
                     },
                     Error: function (up, err) {
                         self.elem.up_error.html("Error #" + err.code + ": " + err.message);

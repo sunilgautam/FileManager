@@ -45,7 +45,7 @@ public class directory_helper : IHttpHandler
             string padding = string.Empty;
             for (int i = 0; i < level; i++)
             {
-                padding += "__ ";
+                padding += "-- ";
             }
 
             // ***************************************************** //
