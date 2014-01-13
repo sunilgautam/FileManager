@@ -264,7 +264,7 @@
                                 </p>
                                 <p>
                                     You are using the advance uploader. Problems? Try the 
-                                    <a id="upload-go-to-html" href="file-uploader.aspx?browser-uploader=1">basic uploader</a> 
+                                    <a id="upload-go-to-html" href="basic-uploader.aspx">basic uploader</a> 
                                     instead.
                                 </p>
                                 <p id="plupload-upload-error" style="display: none;">&nbsp;</p>

@@ -142,3 +142,7 @@
     float: right;
     margin-right: 6px;
 }
+
+#plupload-upload-error {
+    color: Red;
+}

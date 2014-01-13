@@ -581,7 +581,7 @@ function bytesToSize(bytes) {
                         self.refresh();
                     },
                     Error: function (up, err) {
-                        self.elem.up_error.html("Error #" + err.code + ": " + err.message);
+                        self.elem.up_error.stop().html("Error #" + err.code + ": " + err.message).show().delay(2000).fadeOut();
                     }
                 }
             });
